@@ -1,0 +1,214 @@
+html,
+body {
+    font-family: 'Open Sans', sans-serif !important;
+    padding-top: 0;
+    background-color: #1a2a3d;
+    color: #a59d91;
+    text-shadow: 1px 1px 2px #000;
+}
+
+/* a:link, a:visited, a:active {
+    color: #0042a6;
+}
+a:hover {
+    color: #1a3e73;
+} */
+
+button {
+    text-shadow: 0px 1px 2px #000;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+.display-1,
+.display-2,
+.display-3,
+.display-4 {
+    font-family: 'Rajdhani', sans-serif !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    text-shadow: 3px 3px 3px #000;
+}
+
+.text-monospace {
+    font-family: 'Rajdhani', monospace;
+}
+
+.modal-content {
+    background-color: #181a1b;
+    box-shadow: 2px 2px 10px #000;
+    border: 3px solid;
+}
+
+.modal-header {
+    background-color: #1a2a3d;
+    padding: 0.6rem 1rem 0.4rem;
+}
+.modal-header h5 {
+    text-shadow: 1px 1px 2px #000 !important;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
+#main {
+    border-color: #a59d91 !important;
+    background-color: #181a1b !important;
+}
+
+#masterNav {
+    padding-bottom: 1px;
+    border-bottom: solid #a59d91;
+}
+
+#masterNavItems .navbar-nav .nav-link {
+    text-transform: uppercase;
+    padding: 0.6em;
+    border-bottom: solid #a59d91;
+}
+#masterNavItems .navbar-nav .nav-link:hover {
+    background-color: #101112;
+}
+#masterNavItems .navbar-nav .nav-link.active, #masterNavItems .navbar-nav .nav-link.active:hover {
+    background-color: #003473;
+}
+
+@media only screen and (min-width: 960px) {
+    #masterNav {
+        padding: 0;
+    }
+    #masterNavItem .navbar-nav .nav-link {
+        padding: 1em 0.7em;
+    }
+    #masterNavItem .navbar-brand {
+        padding: 0 0.8em;
+    }
+}
+
+#tabbable, #bottomNav {
+    margin-bottom: 2rem;
+}
+
+#tabbable .nav-tabs {
+    border-bottom: none;
+}
+
+#tabbable .nav-tabs .nav-link, #tabbable .nav-tabs .nav-link.active, #tabbable .nav-tabs .nav-link:hover {
+    border-color: transparent !important;
+    border-radius: 0 !important;
+    text-align: left;
+    color: #929ba6;
+}
+#tabbable .nav-tabs .nav-link.active, #tabbable .nav-tabs .nav-link.active:hover {
+    background-color: #003473 !important;
+    color: #a59d91;
+}
+#tabbable .nav-tabs .nav-link:hover {
+    background-color: #242729;
+}
+#tabbable .nav-tabs .nav-link .fa-stack {
+    width: 1.5em !important;
+}
+#tabbable .nav-tabs .nav-link .fa-stack .fa-check {
+    color: #b31414 !important;
+}
+#tabbable.draft .nav-tabs .nav-link {
+    text-align: center;
+    font-weight: bold !important;
+    border-color: #a59d91 !important;
+    background-color: #111;
+}
+
+#tabbable-tab span.fa-stack i.fa-check {
+    display: none;
+}
+
+#tabbable-tab span.fa-stack.checked i.fa-check {
+    display: block;
+}
+
+#tabbable-tabContent .list-group-item {
+    background-color: transparent;
+    border-color: #a59d91;
+}
+
+#tabbable-tabContent .list-group-item img {
+    height: 1.5em;
+    margin-bottom: 0.5em;
+    margin-left: 0.5em;
+}
+
+#tabbable-tabContent .sublist {
+    padding-left: 0 !important;
+    margin-top: 0.5rem;
+}
+
+#tabbable-tabContent ol > li {
+    margin-bottom: 1.5rem;
+}
+
+#tabbable table.attributes th,
+#tabbable table.attributes td {
+    color: white;
+    text-shadow: none;
+    text-align: center;
+    /* font-weight: normal; */
+    background-color: #111;
+}
+#tabbable table.attributes .imp {
+    background-color: rgba(11, 41, 69, 0.7);
+}
+#tabbable table.attributes tbody {
+    cursor: pointer;
+}
+#tabbable table.attributes tbody tr:hover th,
+#tabbable table.attributes tbody tr:hover td,
+#tabbable table.attributes tbody tr.hover th,
+#tabbable table.attributes tbody tr.hover td {
+    background-color: rgba(180, 0, 6, 0.8);
+}
+#tabbable table.attributes tbody tr:hover th.imp,
+#tabbable table.attributes tbody tr:hover td.imp,
+#tabbable table.attributes tbody tr.hover th.imp,
+#tabbable table.attributes tbody tr.hover td.imp {
+    background-color: rgba(180, 0, 6, 0.5);
+}
+
+#bottomNav button {
+    text-transform: uppercase;
+    text-shadow: 1px 1px 2px #000 !important; 
+}
+
+button.close {
+    background: none;
+    height: auto;
+    width: auto;
+    float: right;
+    padding: 0;
+}
+button.close i {
+    vertical-align: top;
+    font-size: 1.5em;
+}
+
+button.btn-sm.btn-smaller {
+    font-size: .7rem;
+    font-family: 'Open Sans', sans-serif;
+    text-transform: uppercase;
+}
+
+.needs .card-body .btn-sm {
+    font-size: 0.6rem !important;
+    text-transform: uppercase !important;
+}
