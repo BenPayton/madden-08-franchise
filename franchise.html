@@ -151,14 +151,7 @@
           Franchise Checklist
         </h1>
         <p class="lead">
-          Based on Nza's Franchise Guide. Use this to keep track of your
-          franchise season by season.
-          <br />View the Nza Franchise Guide thread on FootballIdiot.com
-          <a
-            target="_blank"
-            href="https://footballidiot.com/forum/viewtopic.php?f=80&t=150&sid=78470b616fc915bfd5ca5abdf5787f0a"
-            >here</a
-          >.
+          Use this to keep track of your franchise season by season.
           <button
             type="button"
             class="info btn btn-outline-secondary btn-sm btn-smaller ms-2"
@@ -172,27 +165,43 @@
         <hr class="mt-4" />
 
         <div id="chklst-options" class="d-flex justify-content-center">
-          <label
-            class="col-auto col-form-label col-form-label-sm pe-2"
-            for="seasonNum"
-            >Season:</label
-          >
+          <label class="col-auto col-form-label pe-2">Guide:</label>
           <div class="col-auto pe-4">
-            <select
-              class="form-select form-select-sm bg-dark text-light border-secondary"
-              id="seasonNum"
-            ></select>
+            <button
+              id="headGuide"
+              type="button"
+              class="btn btn-dark border-secondary"
+              disabled
+            ></button>
           </div>
-          <label
-            class="col-auto col-form-label col-form-label-sm pe-2"
-            for="seasonYear"
-            >Year:</label
-          >
-          <div class="col-auto pe-2">
-            <select
-              class="form-select form-select-sm bg-dark text-light border-secondary"
-              id="seasonYear"
-            ></select>
+          <label class="col-auto col-form-label pe-2">Season:</label>
+          <div class="col-auto pe-4">
+            <button
+              id="headSeason"
+              type="button"
+              class="btn btn-dark border-secondary"
+              disabled
+            ></button>
+          </div>
+          <label class="col-auto col-form-label pe-2">Year:</label>
+          <div class="col-auto pe-4">
+            <button
+              id="headYear"
+              type="button"
+              class="btn btn-dark border-secondary"
+              disabled
+            ></button>
+          </div>
+          <div class="col-auto">
+            <div class="d-flex align-items-center h-100">
+              <button
+                id="headEdit"
+                type="button"
+                class="btn btn-sm btn-outline-secondary"
+              >
+                <i class="fas fa-sliders-h"></i> Change
+              </button>
+            </div>
           </div>
         </div>
 
@@ -228,6 +237,20 @@
               >
                 Next Section &raquo;
               </button>
+              <button
+                id="bnAdvance"
+                type="button"
+                class="confirmAdvance btn btn-success h6 d-none"
+              >
+                Advance to Next Season &raquo;
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="spinnerDiv">
+          <div class="row h-100 justify-content-center align-items-center">
+            <div class="fa-10x text-center" style="opacity: 0.2">
+              <i class="fas fa-sync-alt fa-spin"></i>
             </div>
           </div>
         </div>
@@ -324,7 +347,7 @@
             >
               Cancel
             </button>
-            <button type="button" class="confirm btn btn-danger">
+            <button type="button" class="confirmAdvance btn btn-danger">
               Confirm
             </button>
           </div>
@@ -382,6 +405,136 @@
         </div>
       </div>
     </div>
+    <div
+      class="modal fade"
+      id="checklistSettingsModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="checklistSettingsModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="checklistSettingsModalLabel">
+              <img
+                src="img/madden08logo-sm.png"
+                alt="Madden NFL 08"
+                style="
+                  filter: drop-shadow(2px 2px 2px #000);
+                  vertical-align: text-bottom;
+                "
+              />
+              Franchise Companion
+            </h5>
+          </div>
+          <div class="modal-body">
+            <p class="h3" style="text-shadow: 1px 1px 3px #000">
+              <i class="fas fa-sliders-h pe-2"></i>
+              Franchise Settings
+            </p>
+            <p class="fs-5">Choose settings below to start your checklist:</p>
+            <div id="chklst-options" class="row mb-3">
+              <label class="col-auto col-form-label pe-2" for="chosenGuide"
+                >Franchise Guide:</label
+              >
+              <div class="col-auto pe-4">
+                <select
+                  class="form-select bg-dark text-light border-secondary"
+                  id="chosenGuide"
+                ></select>
+              </div>
+            </div>
+            <div id="chklst-options" class="row">
+              <label
+                class="col-auto col-form-label col-form-label-sm"
+                for="seasonNum"
+                >Season:</label
+              >
+              <div class="col-3">
+                <input
+                  type="number"
+                  min="1"
+                  max="30"
+                  value="1"
+                  class="form-control form-control-sm bg-dark text-light border-secondary"
+                  id="seasonNum"
+                />
+              </div>
+              <label
+                class="col-auto col-form-label col-form-label-sm"
+                for="seasonYear"
+                >Year:</label
+              >
+              <div class="col-3">
+                <input
+                  type="number"
+                  min="1900"
+                  max="2100"
+                  value="2007"
+                  class="form-control form-control-sm bg-dark text-light border-secondary"
+                  id="seasonYear"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="confirm btn btn-danger">
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="modal fade"
+      id="confirmChangeSettingsModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="confirmChangeSettingsModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmChangeSettingsModalLabel">
+              <img
+                src="img/madden08logo-sm.png"
+                alt="Madden NFL 08"
+                style="
+                  filter: drop-shadow(2px 2px 2px #000);
+                  vertical-align: text-bottom;
+                "
+              />
+              Franchise Companion
+            </h5>
+          </div>
+          <div class="modal-body">
+            <p class="h3" style="text-shadow: 1px 1px 3px #000">
+              <i class="fas fa-sliders-h pe-2"></i>
+              Change Franchise Settings
+            </p>
+            <p class="fs-5">
+              Are you sure you want to change settings and start over?
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="cancel btn btn-secondary me-3"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="confirm btn btn-danger">
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/bootstrap/bootstrap.bundle.min.js"></script>
@@ -389,8 +542,6 @@
     <script src="js/franchise.js"></script>
 
     <script>
-      setDefaults();
-
       // create modals
       var infoModal = new bootstrap.Modal(document.getElementById("infoModal"));
       var confirmModal = new bootstrap.Modal(
@@ -407,53 +558,146 @@
           keyboard: false,
         }
       );
+      var checklistSettingsModal = new bootstrap.Modal(
+        document.getElementById("checklistSettingsModal"),
+        {
+          backdrop: "static",
+          keyboard: false,
+        }
+      );
+      var confirmChangeSettingsModal = new bootstrap.Modal(
+        document.getElementById("confirmChangeSettingsModal"),
+        {
+          backdrop: "static",
+          keyboard: false,
+        }
+      );
 
       // document ready
       $(function () {
-        // generate content
-        generateTabs();
-        generateSelectSeasons();
-        generateSelectYears();
+        //generate form data
+        generateSelectGuides();
 
-        // initialize tooltips
-        var tooltipTriggerList = [].slice.call(
-          document.querySelectorAll('[data-bs-toggle="tooltip"]')
-        );
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-          return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
+        //delete cookies
+        // deleteCookie("chosenGuide");
+        // deleteCookie("curSeason");
+        // deleteCookie("curYear");
+        // deleteCookie("progress");
 
-        // update progress
-        updateProgress();
+        //check for saved progress
+        if (!checkForSavedProgress()) {
+          $("#chosenGuide").val(0);
+          $("#seasonNum").val(1);
+          $("#seasonYear").val(2007);
+          checklistSettingsModal.show();
+        } else {
+          setDefaults();
+          $("#headGuide").html(frGuides[chosenGuide].name);
+          $("#headSeason").html(curSeason);
+          $("#headYear").html(curYear);
+          generateTabs();
+          $(".curYear").html(curYear);
+          updateProgress();
+
+          // initialize tooltips
+          var tooltipTriggerList = [].slice.call(
+            document.querySelectorAll('[data-bs-toggle="tooltip"]')
+          );
+          var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+          });
+          $("#spinnerDiv").hide();
+        }
 
         // event handling
-        $(":checkbox").on("click", function () {
-          $(this).closest(".list-group-item").toggleClass("bg-dark");
+        $("#headEdit").on("click", function () {
+          confirmChangeSettingsModal.show();
         });
-        $("#tabbable-tabContent input:checkbox").on("click", function () {
-          var itemVal = parseInt(this.value); //string to int
-          chosenProgress = itemVal + 1;
-          var itemTitle = frItems[itemVal].text;
+        $("#confirmChangeSettingsModal button.cancel").on("click", function () {
+          confirmChangeSettingsModal.hide();
+        });
+        $("#confirmChangeSettingsModal button.confirm").on(
+          "click",
+          function () {
+            confirmChangeSettingsModal.hide();
+            progress = 0;
+            $("#chosenGuide").val(chosenGuide);
+            $("#seasonNum").val(curSeason);
+            $("#seasonYear").val(curYear);
+            checklistSettingsModal.show();
+          }
+        );
+        $("#checklistSettingsModal button.confirm").on("click", function () {
+          //user cofirms checklist settings
+          chosenGuide = parseInt($("#chosenGuide").val());
+          curSeason = parseInt($("#seasonNum").val());
+          curYear = parseInt($("#seasonYear").val());
+          console.log(
+            `set values: chosenGuide: ${chosenGuide}, curSeason: ${curSeason}, curYear: ${curYear}`
+          );
 
-          if (chosenProgress == progress) {
-            //do nothing
-          } else if (chosenProgress !== progress + 1) {
+          $("#tabbable-tab").empty();
+          $("#tabbable-tabContent").empty();
+          setDefaults();
+          $("#headGuide").html(frGuides[chosenGuide].name);
+          $("#headSeason").html(curSeason);
+          $("#headYear").html(curYear);
+          generateTabs();
+          $(".curYear").html(curYear);
+          updateProgress();
+
+          // initialize tooltips
+          tooltipTriggerList = [].slice.call(
+            document.querySelectorAll('[data-bs-toggle="tooltip"]')
+          );
+          tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+          });
+          $("#spinnerDiv").hide();
+          checklistSettingsModal.hide();
+        });
+        $("#tabbable").on("click", ":checkbox", function () {
+          $(this).closest(".list-group-item").removeClass("bg-dark");
+          if ($(this).prop("checked") == true) {
+            $(this).closest(".list-group-item").addClass("bg-dark");
+          }
+        });
+        $("#tabbable-tabContent").on("click", "input:checkbox", function () {
+          chosenProgress = parseInt(this.value);
+          let itemTitle = frItems[curChecklist.get(chosenProgress)].text;
+          console.log(
+            "checkbox clicked. chosenProgress: " +
+              chosenProgress +
+              " | progress: " +
+              progress
+          );
+
+          if (chosenProgress == progress - 1) {
+            console.log("decrementing progress by 1...");
+            progress--;
+            updateProgress();
+          } else if (chosenProgress == progress) {
+            console.log("incrementing progress by 1...");
+            progress++;
+            updateProgress();
+          } else {
             console.log(
-              "chosenProgress: " + chosenProgress + " | progress: " + progress
+              "skipping progress from " +
+                progress +
+                " to " +
+                chosenProgress +
+                "..."
             );
-            var messAction = "skip ahead";
+            let messAction = "skip ahead";
             if (chosenProgress < progress) {
               messAction = "revert back";
             }
             //update modal content
-            var newMessage =
+            let newMessage =
               "Are you sure you want to " + messAction + " to this step?";
             $("#mb-warning").html(newMessage);
             $("#mb-item").html("&bull; " + itemTitle);
             confirmModal.show();
-          } else {
-            progress = chosenProgress;
-            updateProgress();
           }
         });
         $("#confirmModal button.cancel").on("click", function () {
@@ -465,22 +709,37 @@
         $("#confirmModal button.confirm").on("click", function () {
           //user chooses to skip ahead/back
           console.log("updating to progress: " + chosenProgress);
-          progress = chosenProgress;
+          progress = chosenProgress + 1; //add one to check the box user just checked
           updateProgress();
           confirmModal.hide();
         });
-        $("#nextSeasonModal button.confirm").on("click", function () {
+        $("button.confirmAdvance").on("click", function () {
           //user advances to next season
           progress = 0;
           curSeason++;
           curYear++;
-          $("#seasonNum").val(curSeason);
-          $("#seasonYear").val(curYear);
-          console.log("advancing to next season");
-          console.log("season: " + curSeason);
-          console.log("year: " + curYear);
+          $("#headSeason").html(curSeason);
+          $("#headYear").html(curYear);
+          console.log("advancing to next season...");
+          console.log("season: " + curSeason + ", year: " + curYear);
+          console.log();
+          generateChecklist();
+          $("#tabbable-tab").empty();
+          $("#tabbable-tabContent").empty();
+          generateTabs();
+          // initialize tooltips
+          tooltipTriggerList = [].slice.call(
+            document.querySelectorAll('[data-bs-toggle="tooltip"]')
+          );
+          tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+          });
+          $(".curYear").html(curYear);
           updateProgress();
           nextSeasonModal.hide();
+        });
+        $("#tabbable-tab").on("click", ".nav-link", function () {
+          updateTabNavButtons($(this).val());
         });
         $("#bnPrevious").on("click", function () {
           var curActiveTabID = $("#tabbable-tab button.active").attr("id");
@@ -495,18 +754,6 @@
           $("#infoTitle").html(infoCopy[type].title);
           $("#infoBody").html(infoCopy[type].body);
           infoModal.show();
-        });
-        $("#seasonNum").change(function () {
-          //update
-          curSeason = parseInt($(this).val());
-          console.log("curSeason updated to: " + curSeason);
-          updateCookies();
-        });
-        $("#seasonYear").change(function () {
-          //update
-          curYear = parseInt($(this).val());
-          console.log("curYear updated to: " + curYear);
-          updateCookies();
         });
       });
     </script>

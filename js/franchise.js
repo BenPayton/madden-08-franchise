@@ -1,285 +1,184 @@
 // global parameters
-let curSeason = null,
+let chosenGuide = null,
+  curSeason = null,
   curYear = null,
-  progress = null,
-  chosenProgress = 0;
+  progress = null, //progress = first step in the checklist that is not checked
+  chosenProgress = 0,
+  stepVals,
+  tabVals;
 
-const maxSeasons = 25;
-const frTabs = [
-  "New Franchise",
-  "Preseason",
-  "Regular Season",
-  "Postseason",
-  "Start Offseason",
-  "Coaches &amp; Owner's Box",
-  "Roster Management",
-  "Re-Sign Players",
-  "Free Agency",
-  "Draft",
-  "Complete Offseason",
-];
+const curChecklist = new Map(),
+      curSteps = new Map(),
+      curTabs = new Map(),
+      maxSeasons = 25;
+const frGuides = {
+  0: { name: "Nza's Franchise Guide" },
+  1: { name: "RevanFan's Franchise Guide" },
+};
+const frTabs = {
+  0: { text: "Start Offseason" },
+  1: { text: "Owner's Box" },
+  2: { text: "Roster Management" },
+  3: { text: "Re-Sign Players" },
+  4: { text: "Free Agency" },
+  5: { text: "Draft" },
+  6: { text: "Complete Offseason" },
+  7: { text: "New Franchise" },
+  8: { text: "Prepare Preseason" },
+  9: { text: "Preseason" },
+  10: { text: "Regular Season" },
+  11: { text: "Postseason" },
+};
 const frSteps = {
-  0: { tabNum: 0, text: "Create Franchise" },
-  1: { tabNum: 0, text: "First Time Setup" },
-  2: { tabNum: 1, text: "Start Preseason" },
-  3: { tabNum: 2, text: "Prepare CPU teams" },
-  4: { tabNum: 2, text: "Prepare Depth Charts" },
-  5: { tabNum: 2, text: "Start Regular Season" },
-  6: { tabNum: 3, text: "Complete Postseason" },
-  7: { tabNum: 4, text: "New Franchise File" },
-  8: { tabNum: 4, text: "Editor adjustments" },
-  9: { tabNum: 5, text: "Coaches" },
-  10: { tabNum: 5, text: "Owner's Box" },
-  11: { tabNum: 6, text: "Draft Class" },
-  12: { tabNum: 6, text: "Progress Through Offseason" },
-  13: { tabNum: 7, text: "Complete Re-Sign Players" },
-  14: { tabNum: 8, text: "Progress to Free Agency" },
-  15: { tabNum: 9, text: "Team Control" },
-  16: { tabNum: 9, text: "Sim Draft In Game" },
-  17: { tabNum: 9, text: "Complete Draft In Editor" },
-  18: { tabNum: 9, text: "Sign Draft Picks In Game" },
-  19: { tabNum: 10, text: "Progress Through the Rest of the Offseason" },
-  20: { tabNum: 10, text: "Import Traded Draft Picks" },
+  0: { tabNum: 0, text: "New Franchise File" },
+  1: { tabNum: 0, text: "End of Season Roster Management" },
+  2: { tabNum: 0, text: "End of Season Editor Adjustments" },
+  3: { tabNum: 0, text: "Start Offseason" },
+  4: { tabNum: 1, text: "Staff" },
+  5: { tabNum: 1, text: "Owner's Box" },
+  6: { tabNum: 2, text: "Draft Class" },
+  7: { tabNum: 2, text: "Progress Through Offseason" },
+  8: { tabNum: 3, text: "Complete Re-Sign Players" },
+  9: { tabNum: 4, text: "Progress to Free Agency" },
+  10: { tabNum: 4, text: "Team Control" },
+  11: { tabNum: 5, text: "Sim Draft In Game" },
+  12: { tabNum: 5, text: "Complete Draft In Editor" },
+  13: { tabNum: 5, text: "Sign Draft Picks In Game" },
+  14: { tabNum: 6, text: "Progress Through the Rest of the Offseason", },
+  15: { tabNum: 6, text: "Import Traded Draft Picks" },
+
+  16: { tabNum: 7, text: "Create Franchise" },
+  17: { tabNum: 7, text: "First Time Setup" },
+
+  18: { tabNum: 8, text: "Prepare Preseason" },
+  19: { tabNum: 8, text: "Prepare Depth Charts" },
+  20: { tabNum: 9, text: "Roster Management" },
+  21: { tabNum: 9, text: "Play Preseason" },
+  22: { tabNum: 10, text: "Prepare Regular Season" },
+  23: { tabNum: 10, text: "Play Through Season" },
+  24: { tabNum: 11, text: "Complete Postseason" },
 };
 const frItems = {
-  0: { stepNum: 0, platform: [0], text: "Create new franchise", note: 0 },
-  1: { stepNum: 0, platform: [0], text: "Skip Training Camp", note: 0 },
-  2: { stepNum: 0, platform: [0], text: "Save and exit franchise", note: 0 },
-  3: {
-    stepNum: 1,
-    platform: [1],
-    text: "Set franchise options and injury sliders",
-    note: 0,
-  },
-  4: { stepNum: 1, platform: [1], text: "Set progression weeks", note: 0 },
-  5: { stepNum: 1, platform: [1, 2], text: "Set AI sliders", note: 0 },
-  6: { stepNum: 1, platform: [2], text: "Set penalty sliders", note: 0 },
-  7: {
-    stepNum: 2,
-    platform: [0],
-    text: "Set sim injury slider to 30",
-    note: 0,
-  },
-  8: { stepNum: 2, platform: [0], text: "Play or sim preseason", note: 0 },
-  9: { stepNum: 2, platform: [0], text: "Progress to regular season", note: 0 },
-  10: { stepNum: 2, platform: [0], text: "Revert sim injury slider", note: 0 },
-  11: { stepNum: 2, platform: [0], text: "Save and exit franchise", note: 0 },
-  12: {
-    stepNum: 3,
-    platform: [1],
-    text: "Apply coach slider adjustments",
-    note: 0,
-  },
-  13: { stepNum: 3, platform: [1, 2], text: "User control all teams", note: 0 },
-  14: {
-    stepNum: 3,
-    platform: [0, 1, 2],
-    text: "Review head coaches and note teams changing to/from 3-4 defense",
-    note: 0,
-  },
-  15: {
-    stepNum: 3,
-    platform: [0, 1, 2],
-    text: "Optimize MLB/DT/DE positions for teams changing to/from 3-4",
-    note: 0,
-  },
-  16: {
-    stepNum: 4,
-    platform: [0, 1, 2],
-    text: "Auto-reorder depth chart for all CPU teams",
-    note: 0,
-  },
-  17: {
-    stepNum: 4,
-    platform: [0, 1, 2],
-    text:
-      "Review each team for obvious depth chart issues and make manual adjustments",
-    note: 0,
-  },
-  18: {
-    stepNum: 5,
-    platform: [0],
-    text: "Play/sim through regular season",
-    note: 0,
-  },
-  19: { stepNum: 5, platform: [0], text: "Advance to postseason", note: 0 },
-  20: {
-    stepNum: 6,
-    platform: [0],
-    text: "Play/sim through playoffs and Super Bowl",
-    note: 0,
-  },
-  21: {
-    stepNum: 6,
-    platform: [0],
-    text: "Play/sim Pro Bowl, DO NOT ADVANCE TO OFFSEASON",
-    note: 0,
-  },
-  22: { stepNum: 6, platform: [0], text: "Save franchise", note: 0 },
-  23: {
-    stepNum: 6,
-    platform: [0],
-    text: "Save as new file and exit franchise",
-    note: 0,
-  },
-  24: {
-    stepNum: 7,
-    platform: [0],
-    text: "Open new franchise file and advance to offseason",
-    note: 0,
-  },
-  25: { stepNum: 7, platform: [0], text: "Save and exit franchise", note: 0 },
-  26: {
-    stepNum: 8,
-    platform: [1, 2],
-    text: "Remove user control for CPU teams",
-    note: 0,
-  },
-  27: {
-    stepNum: 8,
-    platform: [1],
-    text: "Revert coach slider adjustments",
-    note: 0,
-  },
-  28: { stepNum: 8, platform: [1], text: "Run Advanced AWR Boost", note: 0 },
-  29: { stepNum: 9, platform: [0], text: "Sign coaches if necessary", note: 0 },
-  30: {
-    stepNum: 9,
-    platform: [0],
-    text: "Review all teams and note new head coaches",
-    note: 0,
-  },
-  31: {
-    stepNum: 10,
-    platform: [0],
-    text: "Set prices and stadium updates as needed",
-    note: 0,
-  },
-  32: {
-    stepNum: 10,
-    platform: [0],
-    text: "Progress to Player Retirement",
-    note: 0,
-  },
-  33: { stepNum: 10, platform: [0], text: "Save and exit franchise", note: 0 },
-  34: { stepNum: 11, platform: [1], text: "Import draft class", note: 0 },
-  35: { stepNum: 11, platform: [1], text: "Apply Rookie Ratings Fix", note: 0 },
-  36: { stepNum: 11, platform: [1], text: "Apply player body fix", note: 0 },
-  37: { stepNum: 11, platform: [1], text: "Apply career stat fix", note: 0 },
-  38: {
-    stepNum: 12,
-    platform: [0],
-    text: "Progress through Retired Players",
-    note: 0,
-  },
-  39: {
-    stepNum: 12,
-    platform: [0],
-    text: "Progress through Roster Management",
-    note: 0,
-  },
-  40: {
-    stepNum: 12,
-    platform: [0],
-    text: "Progress through Restricted Free Agents",
-    note: 0,
-  },
-  41: {
-    stepNum: 12,
-    platform: [0],
-    text: "Advance to Re-Sign Players",
-    note: 0,
-  },
-  42: {
-    stepNum: 13,
-    platform: [0],
-    text: "Re-sign players as needed but DO NOT ADVANCE",
-    note: 0,
-  },
-  43: { stepNum: 13, platform: [0], text: "Save and exit franchise", note: 0 },
-  44: {
-    stepNum: 13,
-    platform: [1],
-    text: "Apply AWR regression fix",
-    note: '(do not select "revert all ratings" or "all AWR changes")',
-  },
-  45: {
-    stepNum: 14,
-    platform: [0],
-    text: "Progress through Free Agency to 0 days left, DO NOT ADVANCE",
-    note: 0,
-  },
-  46: { stepNum: 14, platform: [0], text: "Save and exit franchise", note: 0 },
-  47: {
-    stepNum: 15,
-    platform: [1, 2],
-    text: "User control all teams",
-    note: 0,
-  },
-  48: {
-    stepNum: 16,
-    platform: [0],
-    text: "Sim draft and advance to Sign Draft Picks",
-    note: "(do not sign any draft picks)",
-  },
-  49: { stepNum: 16, platform: [0], text: "Save and exit franchise", note: 0 },
-  50: {
-    stepNum: 17,
-    platform: [2],
-    text: "Complete draft in Madden Amp",
-    note: 0,
-  },
-  51: {
-    stepNum: 17,
-    platform: [1, 2],
-    text: "Remove user control for CPU teams",
-    note: 0,
-  },
-  52: {
-    stepNum: 18,
-    platform: [0],
-    text: "Sign rookies to dummy contracts",
-    note: 0,
-  },
-  53: { stepNum: 18, platform: [0], text: "Advance to Free Agency", note: 0 },
-  54: { stepNum: 18, platform: [0], text: "Save and exit franchise", note: 0 },
-  55: {
-    stepNum: 18,
-    platform: [1],
-    text: "Apply rookie contract fix",
-    note: 0,
-  },
-  56: {
-    stepNum: 19,
-    platform: [0],
-    text: "Complete Free Agency and advance",
-    note: 0,
-  },
-  57: {
-    stepNum: 19,
-    platform: [0],
-    text: "Reorder depth charts and advance",
-    note: 0,
-  },
-  58: {
-    stepNum: 19,
-    platform: [0],
-    text: "Start new season and advance to training camp",
-    note: 0,
-  },
-  59: { stepNum: 19, platform: [0], text: "Save and exit franchise", note: 0 },
-  60: {
-    stepNum: 20,
-    platform: [2],
-    text: "Move traded draft picks from file",
-    note: "(choose file saved at the end of draft)",
-  },
-  61: { stepNum: 20, platform: [0], text: "Skip training camp", note: 0 },
-  62: { stepNum: 20, platform: [0], text: "Save and exit franchise", note: 0 },
+  1: { stepNum: 0, guide: [0,1], season: 2, platform: [1, 2], text: "(Don't forget to use new franchise file)", note: "(Do not advance to the offseason yet)" },
+
+  2: { stepNum: 1, guide: [1], season: 2, platform: [1], text: "Add every player on your PS team to your regular team", note: 0 },
+  3: { stepNum: 1, guide: [1], season: 2, platform: [0], text: "Sign all practice squad players you wish to keep", note: 0 },
+  
+  5: { stepNum: 2, guide: [1], season: 2, platform: [1], text: "Check the count of how many free agents are in the roster, get number down to 450", note: 0 },
+  6: { stepNum: 2, guide: [0,1], season: 2, platform: [1, 2], text: "Remove user control for CPU teams", note: 0 },
+  7: { stepNum: 2, guide: [0,1], season: 2, platform: [1], text: "Revert coach slider adjustments", note: 0 },
+  8: { stepNum: 2, guide: [0,1], season: 2, platform: [1], text: "Run Advanced AWR Boost", note: 0 },
+  9: { stepNum: 2, guide: [0,1], season: 2, platform: [1], text: "Run OVR Recalculate", note: 0 },
+
+  10: { stepNum: 3, guide: [0,1], season: 2, platform: [0], text: "Advance to the offseason", note: 0 },
+  
+  11: { stepNum: 4, guide: [0], season: 2, platform: [0], text: "Sign coaches if necessary", note: 0 },
+  12: { stepNum: 4, guide: [0], season: 2, platform: [0], text: "Sign training staff if necessary", note: 0 },
+  13: { stepNum: 4, guide: [1], season: 2, platform: [0], text: "Progress through Coach Signings", note: 0 },
+
+  14: { stepNum: 5, guide: [0], season: 2, platform: [0], text: "Set prices, set stadium naming rights, and perform stadium upgrades as needed", note: 0 },
+  15: { stepNum: 5, guide: [1], season: 2, platform: [0], text: "Progress through Owner's Box", note: 0 },
+  16: { stepNum: 5, guide: [0,1], season: 2, platform: [0], text: "Advance to Player Retirement", note: 0 },
+  
+  17: { stepNum: 6, guide: [0,1], season: 2, platform: [1,2], text: "Import draft class (if using custom draft class)", note: 0 },
+  18: { stepNum: 6, guide: [0,1], season: 2, platform: [1], text: "If using game generated draft class, apply Rookie Ratings Fix", note: 0 },
+  19: { stepNum: 6, guide: [0,1], season: 2, platform: [1], text: "Apply career stat fix", note: 0 },
+  20: { stepNum: 6, guide: [0,1], season: 2, platform: [1], text: "Apply player body fix", note: 0 },
+  
+  21: { stepNum: 7, guide: [0,1], season: 2, platform: [0], text: "Progress through Retired Players", note: 0 },
+  22: { stepNum: 7, guide: [0,1], season: 2, platform: [0], text: "Progress through Roster Management", note: 0 },
+  23: { stepNum: 7, guide: [0,1], season: 2, platform: [0], text: "Progress through Restricted Free Agents", note: 0 },
+  24: { stepNum: 7, guide: [0,1], season: 2, platform: [0], text: "Advance to Re-Sign Players", note: 0 },
+
+  25: { stepNum: 8, guide: [0,1], season: 2, platform: [1], text: "Apply AWR regression fix", note: '(Recommend do not select "revert all rating regression" or "revert all AWR changes")' },
+  26: { stepNum: 8, guide: [0], season: 2, platform: [0], text: "Re-sign players as needed and advance to Free Agency", note: 0 },
+  27: { stepNum: 8, guide: [1], season: 2, platform: [0], text: "Re-sign any players you plan to re-sign, and release all the players you don't want back or will let test free agency", note: "(Every player on your team should have a contract)" },
+  28: { stepNum: 8, guide: [1], season: 2, platform: [1], text: "Move 35 players from your main team to the PS team", note: 0 },
+  
+  29: { stepNum: 9, guide: [0,1], season: 2, platform: [0], text: "Progress through Free Agency to 0 days left, DO NOT ADVANCE", note: 0 },
+  
+  30: { stepNum: 10, guide: [0,1], season: 2, platform: [1, 2], text: "User control all teams", note: 0 },
+  
+  31: { stepNum: 11, guide: [0,1], season: 2, platform: [0], text: "Sim draft and advance to Sign Draft Picks", note: "(Do not sign any draft picks)" },
+  
+  32: { stepNum: 12, guide: [0,1], season: 2, platform: [1, 2], text: "Remove user control for CPU teams", note: 0 },
+  33: { stepNum: 12, guide: [0,1], season: 2, platform: [2], text: "Complete draft in Madden Amp", note: 0 },
+  34: { stepNum: 12, guide: [0,1], season: 2, platform: [2], text: "Save the traded draft pick file", note: 0 },
+  35: { stepNum: 12, guide: [0,1], season: 2, platform: [1], text: "Run OVR Recalculate", note: 0 },
+  
+  36: { stepNum: 13, guide: [0], season: 2, platform: [0], text: "Sign rookies to dummy contracts", note: 0 },
+  37: { stepNum: 13, guide: [1], season: 2, platform: [0], text: "Sign draft picks", note: 0 },
+  38: { stepNum: 13, guide: [0], season: 2, platform: [0], text: "Advance to Free Agency but do not sign any free agents", note: 0 },
+  39: { stepNum: 13, guide: [0], season: 2, platform: [1], text: "Apply rookie contract fix", note: `(Choose year <span class="curYear"></span>)` },
+  
+  40: { stepNum: 14, guide: [0], season: 2, platform: [0], text: "Complete Free Agency and advance", note: 0 },
+  41: { stepNum: 14, guide: [0], season: 2, platform: [0], text: "Reorder depth charts and advance", note: 0 },
+  42: { stepNum: 14, guide: [0], season: 2, platform: [0], text: "Start new season and advance to training camp", note: 0 },
+  
+  43: { stepNum: 15, guide: [0,1], season: 2, platform: [2], text: "Move traded draft picks from file", note: "(Choose file saved at the end of draft)" },
+  44: { stepNum: 15, guide: [0,1], season: 2, platform: [0], text: "Skip training camp", note: 0 },
+
+
+  45: { stepNum: 16, guide: [0, 1], season: 1, platform: [0], text: "Create new franchise", note: 0 },
+  46: { stepNum: 16, guide: [0, 1], season: 1, platform: [0], text: "Skip Training Camp", note: 0 },
+
+  47: { stepNum: 17, guide: [0], season: 1, platform: [1], text: "Set franchise options and injury sliders", note: 0 },
+  48: { stepNum: 17, guide: [0], season: 1, platform: [1], text: "Set progression weeks", note: 0 },
+  49: { stepNum: 17, guide: [0], season: 1, platform: [0,1,2], text: "Set AI sliders", note: 0 },
+  50: { stepNum: 17, guide: [0], season: 1, platform: [0,2], text: "Set penalty sliders", note: 0 },
+  51: { stepNum: 17, guide: [1], season: 1, platform: [0,1,2], text: "Set injury sliders", note: "(Recommend 150% for preseason and 102-105% for sim injury)" },
+
+
+  52: { stepNum: 20, guide: [0], season: 0, platform: [1, 2], text: "User control all teams", note: 0 },
+  53: { stepNum: 20, guide: [0], season: 1, platform: [1, 2], text: "Review head coaches and note teams with 3-4 defenses", note: "(Save this info for next season)" },
+  54: { stepNum: 20, guide: [0], season: 2, platform: [1, 2], text: "Review head coaches and note teams changing to/from 3-4 defense", note: "(Save this info)" },
+  55: { stepNum: 20, guide: [0], season: 2, platform: [0, 1, 2], text: "Optimize LB/DL positions in depth chart for teams changing to/from 3-4", note: "(Change player positions to optimize front seven)" },
+  56: { stepNum: 20, guide: [1], season: 1, platform: [1], text: "Move 35 players from your main team to the practice squad team", note: 0 },
+  57: { stepNum: 20, guide: [1], season: 1, platform: [0], text: "Sign players until your roster is full (55 players)", note: 0 },
+  58: { stepNum: 20, guide: [1], season: 1, platform: [1], text: "Transfer all 35 players on the PS team back to the main team", note: 0 },
+  59: { stepNum: 20, guide: [1], season: 0, platform: [9], text: "Make a depth chart containing all 90 players", note: "(Save this somewhere, make a backup if you need to)" },
+  60: { stepNum: 20, guide: [1], season: 0, platform: [1], text: "Move the bottom 35 of your depth chart to the PS team", note: 0 },
+  61: { stepNum: 20, guide: [1], season: 0, platform: [0], text: "Auto-reorder the Depth Chart, then manually adjust using your manually created depth chart", note: 0 },
+  64: { stepNum: 20, guide: [0], season: 0, platform: [1], text: "Apply coach slider adjustments", note: 0 },
+
+  65: { stepNum: 21, guide: [0], season: 0, platform: [0], text: "Set sim injury slider to 30", note: 0 },
+  66: { stepNum: 21, guide: [0], season: 0, platform: [0], text: "Play or sim preseason", note: 0 },
+  67: { stepNum: 21, guide: [0], season: 0, platform: [0], text: "Advance to regular season", note: 0 },
+  68: { stepNum: 21, guide: [0], season: 0, platform: [0], text: "Revert sim injury slider", note: 0 },
+  69: { stepNum: 21, guide: [1], season: 0, platform: [0], text: "Play game 1", note: 0 },
+  70: { stepNum: 21, guide: [1], season: 0, platform: [1], text: "If you have any injuries, replace the injured player with a player on the PS team", note: 0 },
+  71: { stepNum: 21, guide: [1], season: 0, platform: [1], text: "Move your starters to the PS team and replace them with PS players", note: "(If you want to leave your starters in for game 2, skip this)" },
+  72: { stepNum: 21, guide: [1], season: 0, platform: [9], text: "Update your depth chart containing all 90 players", note: "(Save this somewhere, make a backup if you need to)" },
+  73: { stepNum: 21, guide: [1], season: 0, platform: [0], text: "Play game 2", note: 0 },
+  74: { stepNum: 21, guide: [1], season: 0, platform: [1], text: "Take all the players on the PS team and add them to the main team", note: 0 },
+  75: { stepNum: 21, guide: [1], season: 0, platform: [1], text: "Replace the players on the PS team with the starters", note: "(You should now have only backups on your main team)" },
+  76: { stepNum: 21, guide: [1], season: 0, platform: [9], text: "Update your depth chart containing all 90 players", note: "(Save this somewhere, make a backup if you need to)" },
+  77: { stepNum: 21, guide: [1], season: 0, platform: [0], text: "Play games 3 and 4 (you should have almost entirely backups playing)", note: "(I do not recommend playing starters, but of course, you can if you choose to)" },
+  78: { stepNum: 21, guide: [1], season: 0, platform: [1], text: "Move all of the players from the PS team to the main team, then cut or deactivate players until you have 53", note: 0 },
+
+  79: { stepNum: 22, guide: [0], season: 0, platform: [0, 1, 2], text: "Go through CPU depth charts quickly and make sure players are in their best positions", note: "(Edit player positions as needed)" },
+  80: { stepNum: 22, guide: [0], season: 0, platform: [0], text: "Auto-reorder depth chart for each CPU team, then make any necessary manual adjustments", note: 0 },
+  81: { stepNum: 22, guide: [1], season: 0, platform: [0], text: "Advance to the regular season", note: 0 },
+  82: { stepNum: 22, guide: [1], season: 0, platform: [0], text: "Simulate every week 1 game except your own", note: 0 },
+  83: { stepNum: 22, guide: [1], season: 0, platform: [0], text: "Check to see how many of your cut players are still available in free agency, Pick 12 (14 after 2022) to be your practice squad", note: "(Leave them in free agency instead of placing them on the PS team)" },
+  84: { stepNum: 22, guide: [1], season: 0, platform: [0], text: "Set injury slider", note: "(Recommend 113% for regular season and 102-105% for sim injury)" },
+  
+  85: { stepNum: 23, guide: [0], season: 0, platform: [0], text: "Play/sim through regular season", note: 0 },
+  86: { stepNum: 23, guide: [1], season: 0, platform: [1], text: "Move all IR players to the PS team", note: 0 },
+  87: { stepNum: 23, guide: [1], season: 0, platform: [0], text: "Auto-reorder your depth chart and manually adjust as needed", note: 0 },
+  88: { stepNum: 23, guide: [1], season: 0, platform: [0], text: "Play regular season games", note: "(Move all IR players to the PS team as needed. After all transactions, auto-reorder your depth chart and then manually adjust.)" },
+  89: { stepNum: 23, guide: [0, 1], season: 0, platform: [0], text: "Advance to postseason", note: 0 },
+  
+  90: { stepNum: 24, guide: [0,1], season: 0, platform: [0], text: "Play/sim through playoffs and Super Bowl", note: 0 },
+  91: { stepNum: 24, guide: [0,1], season: 0, platform: [0], text: "Play/sim Pro Bowl, DO NOT ADVANCE TO OFFSEASON", note: 0 },
+  92: { stepNum: 24, guide: [0,1], season: 0, platform: [0], text: "Save franchise", note: 0 },
+  93: { stepNum: 24, guide: [0,1], season: 0, platform: [0], text: "Save as new file and exit franchise", note: 0 },
+
+  999: { stepNum: 24, guide: [0,1], season: 0, platform: [0], text: "Save and exit franchise", note: 0 },
 };
 const frPlatforms = {
   game: { name: "Game", imgUrl: "img/madden08-ico.png" },
-  nza: { name: "NZA's Madden Editor", imgUrl: "img/maddeneditor-ico.png" },
+  nza: { name: "Nza's Madden Editor", imgUrl: "img/maddeneditor-ico.png" },
   amp: { name: "Madden Amp", imgUrl: "img/maddenamp-ico.png" },
 };
 const infoCopy = {
@@ -290,6 +189,15 @@ const infoCopy = {
   Use this page to keep track of your franchise, checking off steps as you complete them.
   <strong>This page uses cookies to save your progress in case you close the window or navigate away.</strong>
 </p>
+
+<h4>Franchise Settings</h4>
+<ul>
+    <li>Choose a franchise guide to follow.
+      <br>RevanFan's full guide is <a href="https://www.footballidiot.com/forum/viewtopic.php?f=80&t=540#p3021" target="_blank">here</a>.
+      <br>Nza's full guide is <a href="https://www.footballidiot.com/forum/viewtopic.php?f=80&t=150#p863" target="_blank">here</a>.</li>
+    <li>Enter a season number. <strong>If you are starting a brand new franchise enter 1.</strong></li>
+    <li>Enter the season year.</li>
+</ul>
 
 <h4>Checklist Steps</h4>
 <ul>
@@ -309,14 +217,64 @@ const infoCopy = {
 <p>Click the tabs on the left or use the buttons at the bottom to navigate through the checklist.
   A check mark will appear next to tabs that are completed.</p>
 
-<h4>Completeing the Season</h4>
+<h4>Completing the Season</h4>
 <p>After completing the entire checklist, you will be prompted to advance to the next season.
   This will bring you back to the beginning of the checklist, uncheck all steps, and increment the season and year values.</p>`,
   },
 };
 
+function checkForSavedProgress() {
+  //check if progress is saved in cookies
+  let guideSaved = true,
+    seasonSaved = true,
+    yearSaved = true,
+    progressSaved = true;
+
+  let cookieChosenGuide = parseInt(getCookie("chosenGuide"));
+  if (cookieChosenGuide !== 0 && cookieChosenGuide !== 1) {
+    console.log("chosenGuide not set!");
+    guideSaved = false;
+  }
+
+  if (isNaN(parseInt(getCookie("curSeason")))) {
+    console.log("curSeason not set!");
+    seasonSaved = false;
+  }
+
+  if (isNaN(parseInt(getCookie("curYear")))) {
+    console.log("curYear not set!");
+    yearSaved = false;
+  }
+
+  if (isNaN(parseInt(getCookie("progress")))) {
+    console.log("progress not set!");
+    progressSaved = false;
+  }
+
+  if ( guideSaved === false || seasonSaved === false || yearSaved === false || progressSaved === false ) {
+    return false;
+  }
+  console.log("saved progress is good");
+  console.log(`chosenGuide: ${chosenGuide}, curseason: ${curSeason}, curYear: ${curYear}, progress: ${progress}`);
+  return true;
+}
 function setDefaults() {
   //check if globals are initialized and set if necessary
+
+  //chosenGuide
+  if (chosenGuide === null) {
+    console.log("initializing chosenGuide...");
+    let cookieChosenGuide = parseInt(getCookie("chosenGuide"));
+    if (isNaN(cookieChosenGuide)) {
+      console.log("chosenGuide not set!");
+    } else {
+      chosenGuide = cookieChosenGuide;
+      console.log(
+        "chosenGuide updated from cookie: " + frGuides[cookieChosenGuide].name
+      );
+    }
+  }
+
   //curSeason
   if (curSeason === null) {
     console.log("initializing curSeason...");
@@ -343,12 +301,15 @@ function setDefaults() {
     }
   }
 
+  //checklist
+  generateChecklist();
+
   //progress
   if (progress === null) {
     console.log("initializing progress...");
     let cookieProgress = parseInt(getCookie("progress"));
     if (isNaN(cookieProgress)) {
-      progress = 0;
+      progress = curChecklist.keys().next().value; //first key
       console.log("progress set to default: " + progress);
     } else {
       progress = cookieProgress;
@@ -358,90 +319,164 @@ function setDefaults() {
 
   return true;
 }
+function generateChecklist() {
+  //clear maps
+  curChecklist.clear();
+  curSteps.clear();
+  curTabs.clear();
+  stepVals = new Set();
+  tabVals = new Set();
+
+  //generates tabs, steps, and items objects based on chosen settings
+  console.log("generating checklist...");
+  if (chosenGuide === null) {
+    chosenGuide = 0;
+    console.log("using default guide: " + chosenGuide);
+  }
+  console.log("chosenGuide: " + chosenGuide);
+  let seasonKey = Math.min(2, curSeason);
+  console.log("seasonKey: " + seasonKey);
+
+  //generate checklist items
+  let i = 0;
+  let lastItem;
+  for (const [key, val] of Object.entries(frItems)) {
+    if (
+      (val.guide.indexOf(chosenGuide) != -1) &&
+      (val.season == 0 || val.season == seasonKey) &&
+      (key !== "999")
+    ) {
+      switch (true) {
+        case (i === 0):
+          break;
+        case (JSON.stringify(lastItem.platform) === "[0]" && JSON.stringify(val.platform) !== "[0]"):
+          curChecklist.set(i, "999"); //add save game item to curChecklist
+          i++;
+          break;
+      }
+      curChecklist.set(i, key); //add next item to curChecklist
+      stepVals.add(val.stepNum);
+      lastItem = val;
+      i++;
+    }
+  }
+
+  //update curSteps
+  i = 0;
+  for (const val of stepVals) {
+    curSteps.set(i, val);
+    i++;
+  }
+
+  //update curTabs
+  for (const [key, val] of curSteps) {
+    tabVals.add(frSteps[val].tabNum);
+  }
+  i = 0;
+  for (const val of tabVals) {
+    curTabs.set(i, val);
+    i++;
+  }
+
+  console.log("updated checklist data:");
+  console.log("curChecklist:");
+  console.log(curChecklist);
+  console.log("stepVals:");
+  console.log(stepVals);
+  console.log("curSteps:");
+  console.log(curSteps);
+  console.log("tabVals:");
+  console.log(tabVals);
+  console.log("curTabs:");
+  console.log(curTabs);
+
+  return true;
+}
 function generateTabs() {
   //generates navigation tabs
-  for (let i = 0; i < frTabs.length; i++) {
-    var tabContent = `
-      <button class="nav-link" id="tabbable-${i}-tab" data-bs-toggle="tab" data-bs-target="#tabbable-${i}" type="button" role="tab" aria-controls="tabbable-${i}" aria-selected="true">
+  for (const [key, val] of curTabs) {
+    let tabContent = `
+      <button class="nav-link" id="tabbable-${key}-tab" data-bs-toggle="tab" data-bs-target="#tabbable-${key}" type="button" role="tab" aria-controls="tabbable-${key}" aria-selected="true" value="${key}">
         <span class="fa-stack fa-1x">
           <i class="far fa-circle fa-stack-1x"></i>
           <i class="fas fa-check fa-stack-1x"></i>
         </span>
-        ${frTabs[i]}
+        ${frTabs[val].text}
       </button>`;
     $("#tabbable-tab").append(tabContent);
-    generatePaneContent(i);
+    generatePaneContent(key);
   }
+
   return true;
 }
-function generatePaneContent(tabNum) {
+function generatePaneContent(tabKey) {
   //generate tab pane content
-  var content = `
-    <div class="tab-pane fade" id="tabbable-${tabNum}" role="tabpanel" aria-labelledby="tabbable-${tabNum}-tab">
+  let content = `
+    <div class="tab-pane fade" id="tabbable-${tabKey}" role="tabpanel" aria-labelledby="tabbable-${tabKey}-tab">
       <h2 class="h1">
-        ${frTabs[tabNum]}
+        ${frTabs[curTabs.get(tabKey)].text}
       </h2>
-      ${generateTabSteps(tabNum)}
+      ${generateTabSteps(tabKey)}
     </div>`;
   $("#tabbable-tabContent").append(content);
   return true;
 }
-function generateTabSteps(tabID) {
+function generateTabSteps(tabKey) {
   //generate tab pane steps
-  var stepArr = [];
-  Object.keys(frSteps).forEach((step) => {
-    if (frSteps[step].tabNum == tabID) {
-      stepArr.push(step);
-    }
-  });
-  var content = '<ol class="fs-3">';
-  stepArr.forEach((stepKey) => {
-    content +=
+  let content = '<ol class="fs-3">';
+  for (const [step, val] of curSteps) {
+    if (frSteps[val].tabNum == curTabs.get(tabKey)) {
+      content +=
       "<li>" +
-      frSteps[stepKey].text +
+      frSteps[val].text +
       '<ul class="sublist list-group">' +
-      generateStepItems(stepKey) +
+      generateStepItems(step) +
       "</ul></li>";
-  });
+    }
+  }
   content += "</ol>";
+  
   return content;
 }
-function generateStepItems(stepID) {
+function generateStepItems(stepKey) {
   //generate step items
-  var itemArr = [];
-  Object.keys(frItems).forEach((item) => {
-    if (frItems[item].stepNum == stepID) {
-      itemArr.push(item);
-    }
-  });
-
-  var content = "";
-  itemArr.forEach((itemKey) => {
-    content += `
+  let content = "";
+  let last = "1";
+  for (const [item, val] of curChecklist) {
+    if (
+      (val !== "999" && frItems[val].stepNum == curSteps.get(stepKey)) ||
+      (val === "999" && frItems[last].stepNum == curSteps.get(stepKey))
+    ) {
+      content += `
       <li class="list-group-item">
         <div class="row">
-          <div class="col-1">
-            <input class="form-check-input" type="checkbox" value="${itemKey}" id="chklst-${itemKey}" />
+          <div class="col-auto">
+            <input class="form-check-input" type="checkbox" value="${item}" id="chklst-${item}" />
           </div>
-          <div class="col">`;
-    frItems[itemKey].platform.forEach((key) => {
-      content += generateImage(key);
-    });
-    content += frItems[itemKey].text;
-    if (frItems[itemKey].note != 0) {
-      content += `<br><small>${frItems[itemKey].note}</small>`;
+          <div class="col">
+            <!-- platform: ${frItems[val].platform} -->
+            <div class="float-end">`;
+    for (const el of frItems[val].platform) {
+      content += generateImage(el);
+    }
+    content += `</div>`;
+    content += frItems[val].text;
+    if (frItems[val].note != 0) {
+      content += `<br><small>${frItems[val].note}</small>`;
     }
     content += `
           </div>
         </div>
       </li>`;
-  });
+    }
+    last = val;
+  }
 
   return content;
 }
 function generateImage(id) {
-  var platform;
-  switch (id) {
+  let platform;
+  switch (parseInt(id)) {
     case 0:
       platform = "game";
       break;
@@ -451,70 +486,55 @@ function generateImage(id) {
     case 2:
       platform = "amp";
       break;
+    default: return "";
   }
-  return `<img class="float-end" src="${frPlatforms[platform].imgUrl}" alt="${frPlatforms[platform].name}" title="${frPlatforms[platform].name}" data-bs-toggle="tooltip" data-bs-placement="bottom">`;
+  return `<img src="${frPlatforms[platform].imgUrl}" alt="${frPlatforms[platform].name}" title="${frPlatforms[platform].name}" data-bs-toggle="tooltip" data-bs-placement="bottom">`;
 }
-function generateSelectSeasons() {
-  //generates options for seasons dropdown
-  var x, selected, content;
-  for (let i = 0; i < maxSeasons; i++) {
-    x = i + 1;
-    selected = "";
-    if (x == curSeason) {
-      selected = " selected";
-    }
-    content = "<option" + selected + ' value="' + x + '">' + x + "</option>";
-    $("#seasonNum").append(content);
-  }
-}
-function generateSelectYears() {
-  //generates options for years dropdown
-  var x, selected, content;
-  var year = 2007;
-  for (let i = 0; i < maxSeasons; i++) {
-    x = i + 1;
-    selected = "";
-    if (year == curYear) {
-      selected = " selected";
-    }
-    content =
-      "<option" + selected + ' value="' + year + '">' + year + "</option>";
-    $("#seasonYear").append(content);
-    year++;
-  }
+function generateSelectGuides() {
+  $("#chosenGuide").html(" ");
+  let content;
+  Object.keys(frGuides).forEach(key => {
+    content = `<option value="${key}">${frGuides[key].name}</option>`;
+    $("#chosenGuide").append(content);
+  });
 }
 function updateProgress() {
   //updates item checkboxes and sets active tab
   updateCookies();
-  var item = progress;
-  var tab = currentTab();
+  let curTab = currentTab();
 
-  //check all items up to progress point
-  for (let i = 0; i <= item; i++) {
-    $("#chklst-" + i).prop("checked", true);
-    $("#chklst-" + i)
-      .closest(".list-group-item")
-      .addClass("bg-dark");
-  }
-
-  //uncheck all items past progress point
-  for (let i = item; i < Object.keys(frItems).length; i++) {
-    $("#chklst-" + i).prop("checked", false);
-    $("#chklst-" + i)
-      .closest(".list-group-item")
-      .removeClass("bg-dark");
+  for (const [key, val] of curChecklist) {
+    if (key < progress) {
+      //check all items up to progress point
+      $("#chklst-" + key).prop("checked", true);
+      $("#chklst-" + key)
+        .closest(".list-group-item")
+        .addClass("bg-dark");
+    } else {
+      //uncheck all items past progress point
+      $("#chklst-" + key).prop("checked", false);
+      $("#chklst-" + key)
+        .closest(".list-group-item")
+        .removeClass("bg-dark");
+    }
   }
 
   //set tab checkmarks
   completeTabs();
 
   //show active tab
-  $("#tabbable-" + tab + "-tab").tab("show");
-  updateTabNavButtons(tab);
+  $("#tabbable-" + curTab + "-tab").tab("show");
+  updateTabNavButtons(curTab);
 
   //check season completion
-  if (progress >= Object.keys(frItems).length) {
+  if (progress > (curChecklist.size - 1)) {
+    console.log("end of season reached.");
     nextSeasonModal.show();
+    $("#bnNext").addClass("d-none");
+    $("#bnAdvance").removeClass("d-none");
+  } else {
+    $("#bnNext").removeClass("d-none");
+    $("#bnAdvance").addClass("d-none");
   }
   return true;
 }
@@ -531,40 +551,19 @@ function updateCookies() {
     expires: setCookieDate(9999),
     samesite: "lax",
   });
+  setCookie("chosenGuide", chosenGuide, {
+    expires: setCookieDate(9999),
+    samesite: "lax",
+  });
   console.log("cookies updated.");
 
   return true;
 }
-function isTabCompleted(tabID) {
-  // evaluates whether specified tab is completed
-  var isComplete = false;
-  var curItem = progress - 1;
-  var tabPoints = [];
-  var stepPoints = [];
-
-  //calculate step points
-  Object.keys(frItems).forEach((itemKey) => {
-    Object.keys(frSteps).forEach(() => {
-      stepPoints[frItems[itemKey].stepNum] = itemKey;
-    });
-  });
-
-  //calculate tab points
-  for (let i = 0; i < stepPoints.length; i++) {
-    tabPoints[frSteps[i].tabNum] = stepPoints[i];
-  }
-
-  if (curItem >= tabPoints[tabID]) {
-    isComplete = true;
-  }
-
-  return isComplete;
-}
 function completeTabs() {
   // evaluates each tab and sets completion checkmark
-  for (let i = 0; i < frTabs.length; i++) {
-    var idName = "#tabbable-" + i + "-tab";
-    if (isTabCompleted(i)) {
+  for (const [key, val] of curTabs) {
+    let idName = "#tabbable-" + key + "-tab";
+    if (isTabCompleted(key)) {
       $(idName + " span.fa-stack").addClass("checked");
     } else {
       $(idName + " span.fa-stack").removeClass("checked");
@@ -572,16 +571,42 @@ function completeTabs() {
   }
   return true;
 }
+function isTabCompleted(tabID) {
+  // evaluates whether specified tab is completed
+  let curChecklistItem = progress;
+  if (progress > (curChecklist.size - 1)) {
+    curChecklistItem = curChecklist.size - 1;
+  }
+  let keys = Array.from(curChecklist.keys());
+  let step = frItems[curChecklist.get(keys[curChecklistItem])].stepNum;
+  if (curChecklist.get(curChecklistItem) === "999") {
+    step = frItems[curChecklist.get(keys[curChecklistItem-1])].stepNum;
+  }
+  let tabNum = parseInt(frSteps[step].tabNum);
+  let curTab = Array.from(tabVals).indexOf(tabNum);
+
+  if (tabID < curTab) {
+    return true;
+  } else {
+    return false;
+  }
+}
 function currentTab() {
   //calculates current tab based on global progress value
-  var curItem = progress;
-  //adjust for min and max
-  curItem = Math.max(0, curItem);
-  curItem = Math.min(curItem, Object.keys(frItems).length - 1);
+  let curChecklistItem = progress;
+  if (progress > (curChecklist.size - 1)) {
+    curChecklistItem = curChecklist.size - 1;
+  }
+  let keys = Array.from(curChecklist.keys());
+  let step = frItems[curChecklist.get(keys[curChecklistItem])].stepNum;
+  if (curChecklist.get(curChecklistItem) === "999") {
+    step = frItems[curChecklist.get(keys[curChecklistItem-1])].stepNum;
+  }
+  let tabNum = parseInt(frSteps[step].tabNum);
+  let curTab = Array.from(tabVals).indexOf(tabNum);
+  console.log("current tab: " + curTab);
 
-  var stepNum = frItems[curItem].stepNum;
-
-  return frSteps[stepNum].tabNum;
+  return curTab;
 }
 function navigateToTab(id, next) {
   //navigates to tab before or after specified tab id
@@ -600,8 +625,9 @@ function navigateToTab(id, next) {
   if (newTab < 0) {
     newTab = 0;
   }
-  if (newTab >= frTabs.length) {
-    newTab = frTabs.length - 1;
+  let tabSize = curTabs.size;
+  if (newTab >= tabSize) {
+    newTab = tabSize - 1;
   }
   console.log("newTab: " + newTab);
 
@@ -618,13 +644,22 @@ function updateTabNavButtons(tab) {
   $("#bnNext").prop("disabled", false);
   if (tab == 0) {
     $("#bnPrevious").prop("disabled", true);
-  } else if (tab >= frTabs.length - 1) {
+  } else if (tab >= curTabs.size - 1) {
     $("#bnNext").prop("disabled", true);
   }
+
+  //toggle next/advance to next season buttons
 
   //remove focus
   $("#bnPrevious").blur();
   $("#bnNext").blur();
 
   return true;
+}
+function nextProgress() {
+  let keys = curChecklist.keys();
+  let next = keys.indexOf(progress) + 1;
+  let nextVal = keys[next];
+  console.log("nextProgress: " + nextVal);
+  return nextVal;
 }

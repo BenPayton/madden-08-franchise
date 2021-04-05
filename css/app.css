@@ -190,6 +190,20 @@ h6,
     text-shadow: 1px 1px 2px #000 !important; 
 }
 
+#main form {
+    min-height: 50vh;
+    position: relative;
+}
+#spinnerDiv {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    background-color: #181a1b !important;
+}
+
 button.close {
     background: none;
     height: auto;
