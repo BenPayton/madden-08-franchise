@@ -167,12 +167,13 @@ const frItems = {
   86: { stepNum: 23, guide: [1], season: 0, platform: [1], text: "Move all IR players to the PS team", note: 0 },
   87: { stepNum: 23, guide: [1], season: 0, platform: [0], text: "Auto-reorder your depth chart and manually adjust as needed", note: 0 },
   88: { stepNum: 23, guide: [1], season: 0, platform: [0], text: "Play regular season games", note: "(Move all IR players to the PS team as needed. After all transactions, auto-reorder your depth chart and then manually adjust.)" },
-  89: { stepNum: 23, guide: [0, 1], season: 0, platform: [0], text: "Advance to postseason", note: 0 },
+  89: { stepNum: 23, guide: [1], season: 0, platform: [0], text: "(Each week, you may call up two players from the practice squad to the active roster, but they return to the practice squad after the game. This can only be done twice per player per season.)", note: 0 },
+  90: { stepNum: 23, guide: [0, 1], season: 0, platform: [0], text: "Advance to postseason", note: 0 },
   
-  90: { stepNum: 24, guide: [0,1], season: 0, platform: [0], text: "Play/sim through playoffs and Super Bowl", note: 0 },
-  91: { stepNum: 24, guide: [0,1], season: 0, platform: [0], text: "Play/sim Pro Bowl, DO NOT ADVANCE TO OFFSEASON", note: 0 },
-  92: { stepNum: 24, guide: [0,1], season: 0, platform: [0], text: "Save franchise", note: 0 },
-  93: { stepNum: 24, guide: [0,1], season: 0, platform: [0], text: "Save as new file and exit franchise", note: 0 },
+  91: { stepNum: 24, guide: [0,1], season: 0, platform: [0], text: "Play/sim through playoffs and Super Bowl", note: 0 },
+  92: { stepNum: 24, guide: [0,1], season: 0, platform: [0], text: "Play/sim Pro Bowl, DO NOT ADVANCE TO OFFSEASON", note: 0 },
+  93: { stepNum: 24, guide: [0,1], season: 0, platform: [0], text: "Save franchise", note: 0 },
+  94: { stepNum: 24, guide: [0,1], season: 0, platform: [0], text: "Save as new file and exit franchise", note: 0 },
 
   999: { stepNum: 24, guide: [0,1], season: 0, platform: [0], text: "Save and exit franchise", note: 0 },
 };
