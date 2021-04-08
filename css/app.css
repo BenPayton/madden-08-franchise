@@ -184,6 +184,10 @@ h6,
 #tabbable table.attributes tbody tr.hover td.imp {
     background-color: rgba(180, 0, 6, 0.5);
 }
+#tabbable table.attributes thead th.prog {
+    background-color: rgb(28, 108, 164);
+    cursor: default;
+}
 
 #bottomNav button {
     text-transform: uppercase;

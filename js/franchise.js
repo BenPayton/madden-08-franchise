@@ -73,10 +73,10 @@ const frItems = {
   10: { stepNum: 3, guide: [0,1], season: 2, platform: [0], text: "Advance to the offseason", note: 0 },
   
   11: { stepNum: 4, guide: [0], season: 2, platform: [0], text: "Sign coaches if necessary", note: 0 },
-  12: { stepNum: 4, guide: [0], season: 2, platform: [0], text: "Sign training staff if necessary", note: 0 },
+  12: { stepNum: 4, guide: [0], season: 2, platform: [0], text: "Hire training staff if necessary", note: 0 },
   13: { stepNum: 4, guide: [1], season: 2, platform: [0], text: "Progress through Coach Signings", note: 0 },
 
-  14: { stepNum: 5, guide: [0], season: 2, platform: [0], text: "Set prices, set stadium naming rights, and perform stadium upgrades as needed", note: 0 },
+  14: { stepNum: 5, guide: [0], season: 2, platform: [0], text: "Set prices and perform stadium maintenance as needed", note: 0 },
   15: { stepNum: 5, guide: [1], season: 2, platform: [0], text: "Progress through Owner's Box", note: 0 },
   16: { stepNum: 5, guide: [0,1], season: 2, platform: [0], text: "Advance to Player Retirement", note: 0 },
   
