@@ -1,4 +1,5 @@
 import React from "react";
+import TabbableTab from "../Components/TabbableTab";
 
 const tabList = (props) => {
   return (
@@ -7,7 +8,11 @@ const tabList = (props) => {
       id="tabbable-tab"
       role="tablist"
       aria-orientation="vertical"
-    />
+    >
+      {props.items.map((item) => (
+        <TabbableTab item={item} />
+      ))}
+    </div>
   );
 };
 

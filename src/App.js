@@ -18,6 +18,29 @@ class App extends Component {
     chosenProgress: 0,
     stepVals: null,
     tabVals: null,
+    modalConfirmNextSeason: {
+      modalId: "nextSeasonModal",
+      title: "Confirmation",
+      warning: "Advance to next season?",
+      item: "",
+    },
+    modalConfirmSkip: {
+      modalId: "skipConfirmModal",
+      title: "Confirmation",
+      warning: "Are you sure you want to skip to this step?",
+      item: "",
+    },
+    modalConfirmSettings: {
+      modalId: "confirmChangeSettingsModal",
+      title: "Change Franchise Settings",
+      warning: "Are you sure you want to change settings and start over?",
+      item: "",
+    },
+    modalInfo: {
+      modalId: "infoModal",
+      title: "Info",
+      body: "Info...",
+    },
   };
 
   render() {
